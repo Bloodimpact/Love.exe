@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#100910" />
+  <meta name="description" content="LOVE.exe — a private, two-player couples game." />
+  <title>LOVE.exe — Player 1, Player 2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="LOVE.exe home"><span class="brand-mark">♥</span><span>LOVE<span class="brand-dot">.</span>exe</span></a>
+      <div class="online-pill"><span class="pulse"></span><span id="connection-label">MULTIPLAYER READY</span></div>
+    </header>
+
+    <section id="setup-screen" class="screen setup-screen">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="eyebrow-line"></span> TWO PLAYERS. ONE STORY.</div>
+        <h1>Love is a<br><span class="gradient-text">co-op game.</span></h1>
+        <p class="hero-sub">A little romance. A little chaos. A private world for just the two of you.</p>
+      </div>
+      <div class="setup-card glass-card">
+        <div class="card-heading"><div><div class="mini-label">NEW SESSION</div><h2>Enter your world</h2></div><div class="heart-orbit">♡</div></div>
+        <label for="player-name">YOUR PLAYER NAME</label>
+        <input id="player-name" maxlength="24" placeholder="e.g. Blud" autocomplete="nickname" />
+        <div class="action-grid">
+          <button id="create-btn" class="btn btn-primary"><span>＋</span> Create a room</button>
+          <div class="join-box"><input id="room-code-input" maxlength="6" placeholder="ROOM CODE" aria-label="Room code" autocomplete="off" /><button id="join-btn" class="btn btn-secondary">Join ↗</button></div>
+        </div>
+        <p id="setup-message" class="status-message" role="status">Create a room and send the code to your person.</p>
+        <div class="privacy-note"><span>⌁</span> Private rooms · Two players · Progress saved online</div>
+      </div>
+      <div class="feature-strip"><div><span class="feature-icon">01</span><span>Answer honestly</span></div><div><span class="feature-icon">02</span><span>Unlock together</span></div><div><span class="feature-icon">03</span><span>Keep your memories</span></div></div>
+    </section>
+
+    <section id="game-screen" class="screen game-screen hidden">
+      <div class="game-topline"><button id="leave-btn" class="text-button">← Home</button><div class="room-chip">ROOM <strong id="room-code-display">------</strong><button id="copy-code-btn" aria-label="Copy room code" title="Copy room code">▣</button></div></div>
+      <div class="players-row">
+        <div class="player-card"><div class="avatar avatar-you">♥</div><div class="player-info"><span class="player-label">PLAYER 1</span><strong id="host-name">Waiting...</strong><span id="host-status" class="player-status">Connected</span></div><span id="host-dot" class="player-dot"></span></div>
+        <div class="versus">×</div>
+        <div class="player-card"><div class="avatar avatar-them">♡</div><div class="player-info"><span class="player-label">PLAYER 2</span><strong id="guest-name">Waiting for them</strong><span id="guest-status" class="player-status">Share your code</span></div><span id="guest-dot" class="player-dot waiting"></span></div>
+      </div>
+      <div id="waiting-panel" class="waiting-panel glass-card"><div class="waiting-heart">♡</div><h2>Your person goes here.</h2><p>Send them your room code. The game starts when Player 2 joins.</p><div class="large-code" id="large-room-code">------</div><button id="copy-code-big" class="btn btn-primary">Copy room code ↗</button><div class="waiting-dots"><i></i><i></i><i></i></div></div>
+      <div id="question-panel" class="question-panel glass-card hidden">
+        <div class="level-header"><div><span class="mini-label" id="level-kicker">LEVEL 01 / 05</span><h2 id="level-title">First Impression</h2><p id="level-description">Where your story began.</p></div><div class="level-stamp" id="level-stamp">01</div></div>
+        <div class="progress-row"><div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div><span id="question-count">01 / 10</span></div>
+        <div class="question-meta"><span id="question-category">FIRST IMPRESSION</span><span class="live-tag"><i></i> LIVE SESSION</span></div>
+        <h3 id="question-text" class="question-text">Loading your question...</h3>
+        <label for="answer-input" class="answer-label">YOUR ANSWER <span>Be real. Be kind.</span></label>
+        <textarea id="answer-input" rows="4" maxlength="1200" placeholder="Type what you really feel..."></textarea>
+        <div class="answer-actions"><span id="answer-state" class="answer-state">Your answer stays in this room.</span><button id="submit-answer-btn" class="btn btn-primary">Lock in answer ♥</button></div>
+        <div id="answer-status-card" class="answer-status-card hidden"><div class="status-icon">✦</div><div><strong id="answer-status-title">Your answer is locked in</strong><p id="answer-status-copy">Waiting for your person to answer...</p></div></div>
+        <div id="both-answered-panel" class="both-answered-panel hidden"><div class="both-answered-head"><span>✦ BOTH ANSWERS IN</span><span class="tiny-hearts">♥ ♥</span></div><div class="answers-grid"><article><span id="answer-one-name">PLAYER 1</span><p id="answer-one-text"></p></article><article><span id="answer-two-name">PLAYER 2</span><p id="answer-two-text"></p></article></div><button id="next-question-btn" class="btn btn-primary btn-wide">Next question →</button></div>
+      </div>
+      <div id="complete-panel" class="complete-panel glass-card hidden"><div class="complete-heart">♥</div><div class="eyebrow">SESSION COMPLETE</div><h2>You two did that.</h2><p>You reached the end of this LOVE.exe run. Your answers are saved in your private room.</p><button id="back-to-game-btn" class="btn btn-secondary">Return home</button></div>
+      <footer class="game-footer"><span>LOVE.exe <b>v1.0</b></span><span>MADE FOR TWO ♥</span></footer>
+    </section>
+    <footer class="setup-footer"><span>LOVE.exe <b>v1.0</b></span><span>MADE FOR TWO ♥</span></footer>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
